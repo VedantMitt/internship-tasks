@@ -1,8 +1,6 @@
 import numpy as np
 
-# =====================
-# Load MNIST locally
-# =====================
+
 data = np.load("mnist.npz")
 x_train = data["x_train"][:2000]
 y_train = data["y_train"][:2000]
@@ -11,9 +9,7 @@ X = x_train.reshape(-1, 1, 28, 28) / 255.0
 Y = np.eye(10)[y_train]
 
 
-# ============================================
-# im2col (CORRECT VERSION)
-# ============================================
+
 def im2col(X, FH, FW):
     N, C, H, W = X.shape
     out_h = H - FH + 1
@@ -28,9 +24,7 @@ def im2col(X, FH, FW):
     return col.reshape(N * out_h * out_w, -1), out_h, out_w
 
 
-# ============================================
-# Convolution Layer
-# ============================================
+
 class Conv:
     def __init__(self, in_ch, out_ch, k):
         self.FH = self.FW = k
@@ -62,9 +56,6 @@ class Conv:
         self.b -= lr * db
 
 
-# ============================================
-# MaxPool 2×2
-# ============================================
 class MaxPool:
     def forward(self, X):
         self.X = X
@@ -86,9 +77,7 @@ class MaxPool:
         return d.reshape(N, C, H, W)
 
 
-# ============================================
-# Fully Connected Layer
-# ============================================
+
 class Dense:
     def __init__(self, in_dim, out_dim):
         self.W = np.random.randn(in_dim, out_dim) * 0.01
@@ -109,9 +98,6 @@ class Dense:
         return dX
 
 
-# ============================================
-# Activation + Softmax
-# ============================================
 def relu(x): return np.maximum(0, x)
 def relu_back(d, x): return d * (x > 0)
 def softmax(z):
@@ -121,9 +107,7 @@ def loss_fn(p, y):
     return -np.mean(np.sum(y * np.log(p + 1e-12), axis=1))
 
 
-# ============================================
-# Build Model
-# ============================================
+
 conv = Conv(1, 8, 3)
 pool = MaxPool()
 dense = Dense(8 * 13 * 13, 10)
@@ -132,9 +116,7 @@ lr = 0.01
 epochs = 150
 batch = 64
 
-# ============================================
 # Training Loop
-# ============================================
 for epoch in range(epochs):
     idx = np.random.permutation(len(X))
     Xsh, Ysh = X[idx], Y[idx]
@@ -144,7 +126,7 @@ for epoch in range(epochs):
         xb = Xsh[i:i+batch]
         yb = Ysh[i:i+batch]
 
-        # Forward
+        
         z1 = conv.forward(xb)
         a1 = relu(z1)
         p1 = pool.forward(a1)
@@ -165,9 +147,7 @@ for epoch in range(epochs):
 
     print(f"Epoch {epoch+1}, Loss = {np.mean(losses):.4f}")
 
-# ============================================
-# Test Accuracy
-# ============================================
+
 logits = dense.forward(pool.forward(relu(conv.forward(X))).reshape(len(X), -1))
 preds = np.argmax(logits, axis=1)
 print("Accuracy:", np.mean(preds == y_train)*100, "%")
