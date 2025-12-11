@@ -86,7 +86,7 @@ def backward(X, y, A1, A2, A3, lr):
 #training
 lr = 0.01
 epochs = 100
-batch_size = 128
+batch_size = 150
 n_batches = len(X_train) // batch_size
 
 for epoch in range(epochs):
@@ -109,4 +109,5 @@ y_pred = np.argmax(A3_test, axis=1)
 acc_test = np.mean(y_pred == y_test)
 
 print("\nFINAL TEST ACCURACY:", acc_test)
+
 
