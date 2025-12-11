@@ -26,8 +26,8 @@ def softmax(z):
 
 
 input_size = 784
-h1 = 128
-h2 = 64
+h1 = 150
+h2 = 50
 output_size = 10
 
 np.random.seed(1)
@@ -109,3 +109,4 @@ y_pred = np.argmax(A3_test, axis=1)
 acc_test = np.mean(y_pred == y_test)
 
 print("\nFINAL TEST ACCURACY:", acc_test)
+
